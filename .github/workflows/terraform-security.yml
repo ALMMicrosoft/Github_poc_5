@@ -11,14 +11,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      #########################################
+      # Checkout
+      #########################################
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      #########################################
+      # Setup Terraform
+      #########################################
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      #########################################
+      # Terraform Init
+      #########################################
+
+      - name: Terraform Init
+        run: terraform init
+
+      #########################################
+      # Terraform Validate
+      #########################################
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      #########################################
+      # TFSEC SCAN
+      #########################################
+
       - name: Run tfsec
         uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          soft_fail: false
+
+      #########################################
+      # CHECKOV SCAN
+      #########################################
 
       - name: Run Checkov
         uses: bridgecrewio/checkov-action@master
         with:
           directory: .
           framework: terraform
+          soft_fail: false
+          quiet: false
